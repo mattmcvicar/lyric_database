@@ -70,9 +70,9 @@ number of Insertions (I), Deletions (D) and Substitutions (S) to
 convert the transcript to the reference. The Word Error Rate (WER)
 for a reference of N words is then:
 
-       I + S + D
-WER =  ---------
-           N
+>       I + S + D
+>WER =  ---------
+>           N
 
 The Phoneme Error Rate may be defined analagously. We have built
 a python wrapper for align_words.pl in which you can specify a

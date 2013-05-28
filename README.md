@@ -22,7 +22,6 @@ Contents
 --------
 
 1. Audio
---------
 We have split the audio into train and test splits. Additionally, 
 the data is split into mostly containing sung or rapped vocals.
 For each of these songs, we provide acapella, polyphonic and synthesized
@@ -44,8 +43,6 @@ training set. This is additionally the data we used
 to train the acoustic models.
 
 2. Lyrics data
---------------
-
 For each song, we provide the raw lyrics scraped from the web,
 a phoneme-level alignment, and a word-level alignment. The format
 for each of these is listed below:
@@ -55,15 +52,12 @@ for each of these is listed below:
 *.phones. One line per phoneme, <start><space><phone> 
 
 3. Models
----------
-
 Acoustic and language models are available for download
 from 
 
 [link]
 
 4. Evaluation
--------------
 The main script for evaluation is align_words.pl. It is a command
 line script which takes two files as input and outputs the minimum
 number of Insertions (I), Deletions (D) and Substitutions (S) to 
@@ -79,7 +73,6 @@ a python wrapper for align_words.pl in which you can specify a
 transcript and reference directory. 
 
 5. Predictions
---------------
 We include our best transcripts from the above paper for
 reproducability.
 

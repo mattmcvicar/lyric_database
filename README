@@ -3,4 +3,19 @@ The LabROSA aligned lyrics database
 ===================================
 
 This repository contains phoneme-aligned lyrics data for use
-in automatic lyric transcription. 
+in automatic lyric transcription. Contained within:
+
+Audio
+-----
+
+Lyrics
+------
+
+Speech models
+-------------
+
+- Voxforge.dict
+
+  Pronounciation dictionary for use in ASR. This was sourced
+  from the nightly builds on http://www.voxforge.org/ on
+  Jan 19th 2014 and initially contained 129,460 pronounciations

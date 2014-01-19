@@ -35,7 +35,10 @@ def check_coverage( dictionary, lyrics_path, report_out ):
   print ''
 
   n_lyr = len( lyric_files )
-  
+
+  # Keep track of how many words missing
+  n_missing = 0
+
   for ilyric, lyric_file in enumerate( lyric_files ):
 
     # display progress
@@ -43,6 +46,7 @@ def check_coverage( dictionary, lyrics_path, report_out ):
 
     # print to report
     report.write( lyric_file + '\n')
+
     report.write( '-' * len( lyric_file ) + '\n' )
 
   	# read lyric file
@@ -73,6 +77,8 @@ def check_coverage( dictionary, lyrics_path, report_out ):
       	if word.upper() not in dictionary_words:
 
           # print to report
+          n_missing = n_missing + 1
+
       	  report.write( word + '\n')
 
     # a newline here separates files nicely
@@ -81,7 +87,12 @@ def check_coverage( dictionary, lyrics_path, report_out ):
   # close report file
   report.close()
 
+  # Also print the report to stdout
+  print ''.join( open( report_out ).readlines()[::-1] )
+
   print ''
+  print '  Found ' + str( n_missing ) + ' missing words '
+
   return None
 
 if __name__ == '__main__':

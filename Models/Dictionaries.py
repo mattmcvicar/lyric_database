@@ -14,9 +14,10 @@ def check_coverage( dictionary, lyrics_path, report_out ):
 
   """	
 
-  # The most efficient way of stripping punctuation is 
-  # through line.translate, set it up here
-  stringtrans = string.maketrans( "", "" )
+  # Strip (some) punctuation from the lines. Can't use
+  # the most efficient built-ins since we want to keep
+  # single quotes (frontin' etc) 
+  punctuation = ['!', '?', ',']
 
   # Read dictionary
   dictionary_lines = open( dictionary ).readlines()
@@ -32,7 +33,9 @@ def check_coverage( dictionary, lyrics_path, report_out ):
 
   # Loop through files
   print ''
+
   n_lyr = len( lyric_files )
+  
   for ilyric, lyric_file in enumerate( lyric_files ):
 
     # display progress
@@ -58,11 +61,13 @@ def check_coverage( dictionary, lyrics_path, report_out ):
         continue
 
       # Else, strip all unwanted punctuation
-      cleanline = line.translate( stringtrans, string.punctuation )
+      for p in punctuation:
+
+      	line = line.replace( p, '')
 
       # Finally, loop through words checking if they're in
       # dictionary_words
-      for word in cleanline.split():
+      for word in line.split():
 
         # if we can't find it
       	if word.upper() not in dictionary_words:
@@ -70,6 +75,7 @@ def check_coverage( dictionary, lyrics_path, report_out ):
           # print to report
       	  report.write( word + '\n')
 
+    # a newline here separates files nicely
     report.write( '\n' ) 
 
   # close report file

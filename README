@@ -18,4 +18,8 @@ Speech models
 
   Pronounciation dictionary for use in ASR. This was sourced
   from the nightly builds on http://www.voxforge.org/ on
-  Jan 19th 2014 and initially contained 129,460 pronounciations
+  Jan 19th 2014 and initially contained 129,460 pronounciations. The format is one pronounciation per line, with multiple pronounciations on new lines. For each line, the format is:
+
+  WORD    WORD  [phoneme_1 phoneme_2 ... ]
+
+  any kind of whitespace can be used to delimit. phonemes 

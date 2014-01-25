@@ -88,7 +88,7 @@ def check_coverage( dictionary, lyrics_path, report_out ):
   report.close()
 
   # Also print the report to stdout
-  print ''.join( open( report_out ).readlines()[::-1] )
+  print ''.join( open( report_out ).readlines() )
 
   print ''
   print '  Found ' + str( n_missing ) + ' missing words '

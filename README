@@ -1,0 +1,57 @@
+LabROSA Lyrics / Audio Repository
+=================================
+
+Labrosa 
+repositorY of
+Recorded
+Information
+Concerning
+Audio &
+Lyrics
+
+This is the documentation for LYRICAL: the Labrosa repositorY of Recorded Information Concerning Audio and Lyrics. Contained within are the lyrics to popular music tracks, annotated at the structure level (verse, chorus etc.) with accompanying acapella and polyphonic audio. 
+
+The database is intended to be used for providing a common dataset for Automatic Lyric Transcription (ALT). Also contained within are therefore scripts for reproducing our baseline ALT performance using the Sphinx4 Automatic Speech Recognition system.
+
+Installation
+============
+
+The easiest way of getting the lyrics is to say:
+
+git clone https://github.com/mattmcvicar/lyric_database.git
+
+For queries relating to audio, please email mattjamesmcvicar@gmail.com
+
+Contents
+========
+
+The database is split into two disjoint subsets: "Train" and "Test", and two genres: "Rap" and "Sing". The "Train" set is to be used for training or adapting acoustic or language models, the test set reserved for evaluation. We believe the acoustic and language models for rapped and sung audio to be quite different, so have kept them distinct. 
+
+Each file is written in plain text, with each line being one of:
+  
+  - annotation line
+  - lyric line
+  - empty line
+
+Annotation lines are enclosed within square brackets and contain structural information. lyric lines contain the lyrics to the song, made up of the lower and upper-case letters of the latin alphabet, together with commas (",") exclamation marks ("!") and question marks ("?"). Empty lines are used purely for aesthetic purposes.
+
+Also contained within the repository is a simple python script "Reproduce_baseline.py", used to reproduce the results reported in the paper:
+
+PAPER....
+
+The script assumes you are familiar with Sphinx4. If you require assistance in installing and setting up Sphinx4, please see:
+
+http://cmusphinx.sourceforge.net/wiki/tutorialsphinx4
+
+Attribution
+===========
+
+If you make use of this database in your research, please consider citing the following paper:
+
+
+Contact
+=======
+
+For all queries, please contact mattjamesmcvicar@gmail.com
+
+

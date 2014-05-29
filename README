@@ -33,11 +33,19 @@ Each file is written in plain text, with each line being one of:
   - lyric line
   - empty line
 
-Annotation lines are enclosed within square brackets and contain structural information. lyric lines contain the lyrics to the song, made up of the lower and upper-case letters of the latin alphabet, together with commas (",") exclamation marks ("!") and question marks ("?"). Empty lines are used purely for aesthetic purposes.
+Annotation lines are enclosed within square brackets and contain structural information. lyric lines contain the lyrics to the song, made up of the lower and upper-case letters of the latin alphabet, together with commas (",") exclamation marks ("!") and question marks ("?"). Empty lines are used purely for aesthetic purposes. Example file snippet (first verse of "30_Seconds_to_Mars_-_The_Kill.lyrics"):
 
-Also contained within the repository is a simple python script "Reproduce_baseline.py", used to reproduce the results reported in the paper:
+-----------------------------------
+[VERSE]
+What if I wanted to break
+Laugh it all off in your face
+What would you do? Oh, oh oh oh
+What if I fell to the floor
+Couldn't take all this anymore
+What would you do do, do do, do do?
+-----------------------------------
 
-PAPER....
+Also contained within the repository is a simple python script "Reproduce_baseline.py", used to reproduce the results reported in the accompanying paper (see below)
 
 The script assumes you are familiar with Sphinx4. If you require assistance in installing and setting up Sphinx4, please see:
 

@@ -1,14 +1,6 @@
 LabROSA Lyrics / Audio Repository
 =================================
 
-Labrosa 
-repositorY of
-Recorded
-Information
-Concerning
-Audio &
-Lyrics
-
 This is the documentation for LYRICAL: the Labrosa repositorY of Recorded Information Concerning Audio and Lyrics. Contained within are the lyrics to popular music tracks, annotated at the structure level (verse, chorus etc.) with accompanying acapella and polyphonic audio. 
 
 The database is intended to be used for providing a common dataset for Automatic Lyric Transcription (ALT). Also contained within are therefore scripts for reproducing our baseline ALT performance using the Sphinx4 Automatic Speech Recognition system.

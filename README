@@ -8,11 +8,80 @@ The database is intended to be used for providing a common dataset for Automatic
 Installation
 ============
 
+Lyrics
+------
 The easiest way of getting the lyrics is to say:
 
 git clone https://github.com/mattmcvicar/lyric_database.git
 
+Audio
+-----
 For queries relating to audio, please email mattjamesmcvicar@gmail.com
+
+Sphinx4
+-------
+If you want to run Reproduce_baseline.py, you will need to set up a Sphinx4 project. The following list of conjures was found to be effective on Mac OSX 10.6.8, revision revision 12489. If the following doesn't work for you, it may be that the sphinx4 structure has changed, in which case email mattjamesmcvicar@gmail.com and I'll update this README.
+
+1) Download latest stable Sphinx4 *source* release from:
+
+http://cmusphinx.sourceforge.net/wiki/download/
+
+2) unzip and cd into repo
+
+jar xvf sphinx4-5prealpha-src.zip
+cd sphinx4-5prealpha
+
+3) build Sphinx4 and all demos
+
+ant
+
+4) We're going to adapt one of the demos for our own use. Open up
+
+/src/apps/edu/cmu/sphinx/demo/transcriber/Transcriber.java
+
+in an editor. First, note that Transcriber currently spits out quite a bit of info, so comment out everything in the while loop (lines 51-63) and replace it with the following:
+
+System.out.format("%s\n", result.getHypothesis());
+
+so that it just echoes the best hypothesis for each detected utterance to stdout
+
+5) re-complile the demo:
+
+ant
+
+6) Run the demo, with 512mb starting heap memory, up to 1GB. Run the following:
+
+java -Xms512m -Xmx1024m -jar ./bin/Transcriber.jar
+
+It's had a pretty good go at transcribing some digits. You should see:
+
+what zero is zero zero one
+nine oh two one oh
+cyril one eight zero three
+
+7) The demo currently reads the audio file stored in 
+
+src/apps/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav
+
+and transcribes it using a fairly general-purpose model. Let's adapt it to take an audio file as an additional input. Set the line:
+
+recognizer.startRecognition(new URL("file:src/apps/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav").openStream());
+
+to be:
+
+recognizer.startRecognition(new URL("file:" + args[0] ).openStream());
+
+8) re-compile the demo for the last time:
+
+ant
+
+9) Now try running on your own audio:
+
+java -Xms512m -Xmx1024m -jar ./bin/Transcriber.jar 
+
+10) That's it! Note you can also change the acoustic model, language model and dictionary in Transcriber.java too. Just remember to re-compile after each change. To reproduce our baseline results, see the file 
+
+resources/Reproduce_baseline.py
 
 Contents
 ========

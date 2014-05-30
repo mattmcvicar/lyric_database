@@ -17,6 +17,8 @@ For queries relating to audio, please email mattjamesmcvicar@gmail.com
 Contents
 ========
 
+Lyrics
+------
 The database is split into two disjoint subsets: "Train" and "Test", and two genres: "Rap" and "Sing". The "Train" set is to be used for training or adapting acoustic or language models, the test set reserved for evaluation. We believe the acoustic and language models for rapped and sung audio to be quite different, so have kept them distinct. 
 
 Each file is written in plain text, with each line being one of:
@@ -41,6 +43,16 @@ Couldn't take all this anymore
 What would you do do, do do, do do?
 -----------------------------------
 
+Resources
+---------
+Since the database contains a considerable amount of slang, we also include a file 
+
+resources/Train_Test_Holdout.dict
+
+which contains pronounciations from the CMU set of 39 unstressed phonemes for each word in the train, test, and holdout sets. These are not used in our baseline experiments (many will most likely not be in standard language models) except in evaluation, but will be essential in training new language models. 
+
+Reproduce_baseline.py
+---------------------
 Also contained within the repository is a simple python script "Reproduce_baseline.py", used to reproduce the results reported in the accompanying paper (see below)
 
 The script assumes you are familiar with Sphinx4. If you require assistance in installing and setting up Sphinx4, please see:

@@ -50,7 +50,7 @@ def get_local_name(p):
 
 
 def check_words(lyric_names, pronounciations):
-    exclude = [',', '?', '!', '-']
+    exclude = [',', '?', '!']
     bad_words = []
     for lyrics_file in lyric_names:
         with open(lyrics_file, 'r') as f:

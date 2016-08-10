@@ -49,6 +49,22 @@ def get_local_name(p):
     return os.path.splitext(os.path.split(l)[-1])[0]
 
 
+def check_dictionary(pronounciations, phones):
+    for word, pron in pronounciations.items():
+        for p in pron:
+            if p not in phones:
+                print '  WARNING:', word, 'has illegal phone', p
+
+
+def load_phones(phones_file):
+    phones = []
+    with open(phones_file, 'r') as f:
+        for line in f:
+            phones.append(line.strip())
+
+    return phones
+
+
 def check_words(lyric_names, pronounciations):
     exclude = [',', '?', '!']
     bad_words = []
@@ -97,10 +113,13 @@ if __name__ == "__main__":
             print '  WARNING:', d, 'has a lyrics file but no audio'
 
     # get word pronounciations
-    lyric_dict = load_dict('./Train_Test_Holdout.dict', None)
-    cmu_dict = load_dict('./cmu.dict', ';;;')
-    pronounciations = lyric_dict.copy()
-    pronounciations.update(cmu_dict)
+    pronounciations = load_dict('./cmu.dict', ';;;')
+
+    # load phones
+    phones = load_phones('./phones')
+
+    # check dictionary
+    check_dictionary(pronounciations, phones)
 
     # load up words
     words = check_words(lyrics_names, pronounciations)
@@ -109,4 +128,3 @@ print ''
 print '  Everything else looks peachy!'
 print '  Done'
 print ''
-

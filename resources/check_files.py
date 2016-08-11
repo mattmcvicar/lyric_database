@@ -1,10 +1,11 @@
 import argparse
 import os
-import string
 
 
 def get_cl_args():
-
+    """
+    Gets the command line arguments
+    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--audio-folder', '-f', type=str, required=True,
@@ -19,6 +20,9 @@ def get_cl_args():
 
 
 def load_dict(filename, comment):
+    """
+    loads a pronounciation dictionary
+    """
     D = dict()
     with open(filename, 'r') as f:
         for line in f:
@@ -26,15 +30,22 @@ def load_dict(filename, comment):
                 continue
 
             stuff = line.split()
+
+            # split into word and phones
             D[stuff[0]] = stuff[1:]
 
     return D
 
 
 def get_filenames(root, ext):
-
+    """
+    searches through a directory recursively looking for files which
+    end with ext
+    """
     filenames = []
     for folder, subFolders, files in os.walk(root):
+        # Holdout set is not done yet - comment/delete this
+        # to see report for *all* files
         if 'Holdout' in folder:
             continue
 
@@ -46,10 +57,14 @@ def get_filenames(root, ext):
 
 
 def get_local_name(p):
+    # gets jsut the name, without ext
     return os.path.splitext(os.path.split(l)[-1])[0]
 
 
 def check_dictionary(pronounciations, phones):
+    """
+    looks through pronounciations and checks all phones are legit
+    """
     for word, pron in pronounciations.items():
         for p in pron:
             if p not in phones:
@@ -57,6 +72,9 @@ def check_dictionary(pronounciations, phones):
 
 
 def load_phones(phones_file):
+    """
+    loads up a phone dictionary
+    """
     phones = []
     with open(phones_file, 'r') as f:
         for line in f:
@@ -66,19 +84,33 @@ def load_phones(phones_file):
 
 
 def check_words(lyric_names, pronounciations):
+    """
+    Loads up the lyrics, and checks that every word has a pronounciation.
+    Words need some processing
+    """
+    # we skip these chars. Maybe they should be removed from the data,
+    # but they also seem like they could be useful for advanced alignment
+    # etc, so keep them for now
     exclude = [',', '?', '!']
+
+    # keep track of any bad words we see
     bad_words = []
     for lyrics_file in lyric_names:
         with open(lyrics_file, 'r') as f:
             for line in f:
+                # structural segmentations are like [VERSE]
                 if line.startswith('['):
                     continue
 
+                # we kept empty lines for structural information too
                 if len(line) == 0:
                     continue
 
+                # keep only the good chars, strip newlines, and split into words
                 line = ''.join(ch for ch in line if ch not in exclude)
                 w = line.upper().strip().split()
+
+                # check each word
                 for ww in w:
                     if ww not in pronounciations and ww not in bad_words:
                         print '  WARNING:', ww, 'in', lyrics_file, 'has no pronounciation'

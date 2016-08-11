@@ -76,28 +76,59 @@ def do_alignment(lyric_file, audio_file):
 
 def format_alignment(raw_alignment):
     lines = open(raw_alignment, 'r').readlines()
-    lines = lines[9:]
-    print lines[:4]
-    sdfdf
+    lines = [l.strip() for l in lines]
+    lines = '***SEP***'.join(lines)
+    x = lines.split("IntervalTier")
+    assert len(x) == 3
+    header, phones, words = x
+    phones = phones.split('***SEP***')
+    phones = phones[5:]
 
-        # print len(f)
-        # sdfdf
-        # for line in f:
-        #     line = line.strip()
-        #     if len(line) == 0:
-        #         continue
+    words = words.split('***SEP***')
+    words = words[5:]
 
-        #     if line.startswith('File type'):
-        #         continue
+    start_phone, end_phone, phones = phones[::3], phones[1::3], phones[2::3]
+    start_phone = [s for s in start_phone if s != '"']
+    phones = [p[1:-1] for p in phones]
+    assert len(start_phone) == len(end_phone)
+    assert len(end_phone) == len(phones)
 
-        #     if line.startswith('"TextGrid"'):
-        #         continue
+    return zip(phones, start_phone, end_phone)
 
-        #     if line.startswith('<'):
-        #         continue
 
-        #     print line
-        #     dsfds
+def write_alignment(alignment, lyric_filename):
+    path_bits = lyric_filename.split(os.sep)
+    if path_bits[-3] == 'Train':
+        output_filename = os.path.join(ALIGNED_DIR, 'Train')
+    elif path_bits[-3] == 'Test':
+        output_filename = os.path.join(ALIGNED_DIR, 'Test')
+    elif path_bits[-4] == 'Holdout':
+        output_filename = os.path.join(ALIGNED_DIR, 'Holdout')
+    else:
+        raise ValueError("Badly formed directory")
+
+    if path_bits[-2] == 'Sing':
+        output_filename = os.path.join(output_filename, "Sing")
+    elif path_bits[-2] == 'Rap':
+        output_filename = os.path.join(output_filename, "Rap")
+    else:
+        raise ValueError("Badly formed directory")
+
+    # make dir if needed
+    if not os.path.exists(output_filename):
+        os.makedirs(output_filename)
+
+    # add in name
+    local_name = os.path.splitext(path_bits[-1])[0]
+    output_filename = os.path.join(output_filename, local_name)
+
+    # write
+    with open(output_filename, 'w') as f:
+        for line in alignment:
+            x, start, end = line
+            f.write(x + ' ')
+            f.write(start + ' ')
+            f.write(end + '\n')
 
 
 if __name__ == "__main__":
@@ -130,7 +161,9 @@ if __name__ == "__main__":
         raw_alignment = do_alignment(prepped_lyric_file, audio_filename)
 
         # read and re-format
-        format_alignment(raw_alignment)
+        formatted_output = format_alignment(raw_alignment)
 
         os.chdir(current_path)
-        dsffsd
+
+        # write alignment
+        write_alignment(formatted_output, lyric_filename)

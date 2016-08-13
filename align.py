@@ -74,7 +74,7 @@ def prep_mlf(trsfile, mlffile, word_dictionary, surround, between):
     i = 0
 
     # this pattern matches hyphenated words, such as TWENTY-TWO; however, it doesn't work with longer things like SOMETHING-OR-OTHER
-    hyphenPat = re.compile(r'([A-Z]+)-([A-Z]+)')
+    hyphenPat = re.compile(r"([A-Z]+)-([A-Z]+)")
 
     while (i < len(lines)):
         txt = lines[i].replace('\n', '')
@@ -90,6 +90,7 @@ def prep_mlf(trsfile, mlffile, word_dictionary, surround, between):
         # break up any hyphenated words into two separate words
         txt = re.sub(hyphenPat, r'\1 \2', txt)
 
+        # change single quotes
         txt = txt.split()
 
         for wrd in txt:
@@ -99,7 +100,7 @@ def prep_mlf(trsfile, mlffile, word_dictionary, surround, between):
                     words.append(between)
             else:
                 pass
-                #print "SKIPPING WORD", wrd
+                print "SKIPPING WORD", wrd
 
         i += 1
 

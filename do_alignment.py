@@ -17,6 +17,10 @@ def get_filenames(root):
             # Mac OSX BS
             if '.DS_Store' in filename:
                 continue
+
+            if "Holdout" in folder:
+                continue
+
             filenames.append(os.path.join(folder, filename))
 
     return list(set(filenames))
@@ -37,10 +41,10 @@ def prep_filename(filename):
             words = line.upper().strip().split()
 
             # we insert "short pause" (sp) between words
-            to_write.append(' sp '.join(words))
+            to_write.append(' '.join(words))
 
     # add silence ({SL}) between phrases = lines
-    to_write = ' {SL} '.join(to_write)
+    to_write = ' '.join(to_write)
 
     # write to temp file
     temp_file = open('./unaligned_file', 'w')
@@ -95,7 +99,7 @@ def format_alignment():
     n_phones = int(lines[0])
     phones = lines[:n_phones * 3]
 
-    words = lines[n_phones * 3:-1]
+    words = lines[n_phones * 3 + 1:-1]
 
     # take every 3rd entry for the start, end, text
     phone, start_phone, end_phone = phones[::3], phones[1::3], phones[2::3]
@@ -116,7 +120,7 @@ def write_alignment(alignment, lyric_filename, ext):
         output_filename = os.path.join(ALIGNED_DIR, 'Train')
     elif path_bits[-3] == 'Test':
         output_filename = os.path.join(ALIGNED_DIR, 'Test')
-    elif path_bits[-4] == 'Holdout':
+    elif path_bits[-3] == 'Holdout':
         output_filename = os.path.join(ALIGNED_DIR, 'Holdout')
     else:
         raise ValueError("Badly formed directory")
@@ -156,7 +160,7 @@ if __name__ == "__main__":
 
     # re-format according to format on this blog:
     # http://linguisticmystic.com/2014/02/12/penn-forced-aligner-on-mac-os-x/
-    lyric_filenames = get_filenames(LYRICS_DIR)[:1]
+    lyric_filenames = get_filenames(LYRICS_DIR)
     audio_filenames = get_filenames(audio_dir)
     n_files = len(lyric_filenames)
 
@@ -165,20 +169,23 @@ if __name__ == "__main__":
 
         print '  working on file', ifile + 1, 'of', n_files, '-', lyric_filename
 
-        # prep the file
-        prep_filename(lyric_filename)
+        try:
+            # prep the file
+            prep_filename(lyric_filename)
 
-        # now get the filename of the audio
-        audio_filename = get_audio_filename(lyric_filename, audio_filenames)
+            # now get the filename of the audio
+            audio_filename = get_audio_filename(lyric_filename, audio_filenames)
 
-        # now do the alignment
-        #do_alignment(audio_filename)
+            # now do the alignment
+            do_alignment(audio_filename)
 
-        # read and re-format
-        phones, words = format_alignment()
+            # read and re-format
+            phones, words = format_alignment()
 
-        # write alignment
-        write_alignment(phones, lyric_filename, '.phones')
-        write_alignment(words, lyric_filename, '.words')
+            # write alignment
+            write_alignment(phones, lyric_filename, '.phones')
+            write_alignment(words, lyric_filename, '.words')
 
-        tidy()
+            tidy()
+        except:
+            pass

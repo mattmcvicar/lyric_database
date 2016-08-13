@@ -19,7 +19,7 @@ def get_filenames(root):
                 continue
             filenames.append(os.path.join(folder, filename))
 
-    return set(filenames)
+    return list(set(filenames))
 
 
 def prep_filename(filename):
@@ -43,12 +43,9 @@ def prep_filename(filename):
     to_write = ' {SL} '.join(to_write)
 
     # write to temp file
-    temp_file = open('./temp', 'w')
+    temp_file = open('./unaligned_file', 'w')
     temp_file.write(to_write)
     temp_file.close()
-
-    # return the temp filename
-    return os.path.abspath("./temp")
 
 
 def get_cl_args():
@@ -57,18 +54,12 @@ def get_cl_args():
     """
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--p2fa-dir', '-p', type=str, required=True,
-       help='folder where the p2fa align library https://www.ling.upenn.edu/phonetics/old_website_2015/p2fa/ is found.')
-
     parser.add_argument('--audio-dir', '-a', type=str, required=True,
         help="folder where audio is stored. Note filenames must match")
 
     cl_args = vars(parser.parse_args())
 
-    p2fa = cl_args['p2fa_dir']
-    audio_dir = cl_args['audio_dir']
-
-    return p2fa, audio_dir
+    return cl_args['audio_dir']
 
 
 def get_audio_filename(filename, audio_filenames):
@@ -83,62 +74,38 @@ def get_audio_filename(filename, audio_filenames):
     return matches[0]
 
 
-def do_alignment(lyric_file, audio_file, align_dir):
+def do_alignment(audio_file):
     # we'll do this via a sys call
-    command = ['python', 'align.py', audio_file, lyric_file, 'temp_aligned']
+    command = ['python', 'align.py', audio_file, './unaligned_file', './aligned_file']
 
     # do the alignment
     call(command)
 
-    # return the filename of the output
-    return os.path.join(align_dir, 'temp_aligned')
 
-
-def format_alignment(raw_alignment):
+def format_alignment():
     """
     Opens up a raw alignment, and formats it
     """
 
     # open the file lines, strip newlines
-    lines = open(raw_alignment, 'r').readlines()
+    lines = open('./aligned_file', 'r').readlines()
     lines = [l.strip() for l in lines]
 
-    # hacky - put in a sep string so we can deal with
-    # one large string
-    lines = '***SEP***'.join(lines)
+    # first line tells us how many phones
+    n_phones = int(lines[0])
+    phones = lines[:n_phones * 3]
 
-    # split this large string into header, phones, words
-
-    # must be exactly 3
-    x = lines.split("IntervalTier")
-    assert len(x) == 3
-    header, phones, words = x
-
-    # split them again, skipping subheader (hacky!)
-    phones = phones.split('***SEP***')
-    phones = phones[5:]
-
-    words = words.split('***SEP***')
-    words = words[5:]
+    words = lines[n_phones * 3:-1]
 
     # take every 3rd entry for the start, end, text
-    start_phone, end_phone, phones = phones[::3], phones[1::3], phones[2::3]
-
-    # blerg, some empty strings have crept in
-    start_phone = [s for s in start_phone if s != '"']
-
-    # remove quotes either side of word. hacky
-    phones = [p[1:-1] for p in phones]
-
-    # check everything is legit
-    assert len(start_phone) == len(end_phone)
-    assert len(end_phone) == len(phones)
+    phone, start_phone, end_phone = phones[::3], phones[1::3], phones[2::3]
+    word, start_word, end_word = words[::3], words[1::3], words[2::3]
 
     # zip them up
-    return zip(phones, start_phone, end_phone)
+    return zip(phone, start_phone, end_phone), zip(word, start_word, end_word)
 
 
-def write_alignment(alignment, lyric_filename):
+def write_alignment(alignment, lyric_filename, ext):
     """
     Writes an alignment in lab format
     """
@@ -167,7 +134,7 @@ def write_alignment(alignment, lyric_filename):
 
     # add in name
     local_name = os.path.splitext(path_bits[-1])[0]
-    output_filename = os.path.join(output_filename, local_name)
+    output_filename = os.path.join(output_filename, local_name) + ext
 
     # write
     with open(output_filename, 'w') as f:
@@ -178,39 +145,40 @@ def write_alignment(alignment, lyric_filename):
             f.write(end + '\n')
 
 
+def tidy():
+    os.system("rm unaligned_file")
+    os.system("rm aligned_file")
+
 if __name__ == "__main__":
 
     # add the align directory to the path
-    align_dir, audio_dir = get_cl_args()
-
-    if align_dir not in sys.path:
-        sys.path.append(align_dir)
-
-    current_path = os.getcwd()
+    audio_dir = get_cl_args()
 
     # re-format according to format on this blog:
     # http://linguisticmystic.com/2014/02/12/penn-forced-aligner-on-mac-os-x/
-    lyric_filenames = get_filenames(LYRICS_DIR)
+    lyric_filenames = get_filenames(LYRICS_DIR)[:1]
     audio_filenames = get_filenames(audio_dir)
+    n_files = len(lyric_filenames)
 
-    for lyric_filename in lyric_filenames:
-        print lyric_filename
+    print ''
+    for ifile, lyric_filename in enumerate(lyric_filenames):
+
+        print '  working on file', ifile + 1, 'of', n_files, '-', lyric_filename
+
         # prep the file
-        prepped_lyric_file = prep_filename(lyric_filename)
-
-        # do the alignment. first cd into the dir
-        os.chdir(align_dir)
+        prep_filename(lyric_filename)
 
         # now get the filename of the audio
         audio_filename = get_audio_filename(lyric_filename, audio_filenames)
 
         # now do the alignment
-        raw_alignment = do_alignment(prepped_lyric_file, audio_filename, align_dir)
+        #do_alignment(audio_filename)
 
         # read and re-format
-        formatted_output = format_alignment(raw_alignment)
-
-        os.chdir(current_path)
+        phones, words = format_alignment()
 
         # write alignment
-        write_alignment(formatted_output, lyric_filename)
+        write_alignment(phones, lyric_filename, '.phones')
+        write_alignment(words, lyric_filename, '.words')
+
+        tidy()
